@@ -186,34 +186,21 @@ if (!class_exists('speech_inworld')) {
 								}
 								
 								if (!empty($voice_id)) {
-									// Build detailed voice info
-									$voice_info = $display_name;
-									
-									// Add description if available
-									if (!empty($description)) {
-										$voice_info .= ' - ' . $description;
-									}
-									
-									// Add language if available
-									if (!empty($languages) && is_array($languages)) {
-										$language_codes = implode(', ', $languages);
-										$voice_info .= ' (' . $language_codes . ')';
-									}
-									
-									$voices[$voice_id] = $voice_info;
+									// Store structured voice data for JavaScript access
+									$voices[$voice_id] = [
+										'name' => $display_name,
+										'description' => $description,
+										'languages' => $languages
+									];
 								}
 							}
 							
-							error_log("Inworld API: Successfully fetched " . count($voices) . " voices");
 						}
 					} else {
-						error_log("Inworld API Error: HTTP $http_code" . ($curl_error ? " - $curl_error" : ""));
 						if ($response) {
-							error_log("Response: " . substr($response, 0, 500));
 						}
 					}
 				} catch (Exception $e) {
-					error_log("Inworld API Exception: " . $e->getMessage());
 				}
 			}
 			
@@ -294,7 +281,6 @@ if (!class_exists('speech_inworld')) {
 					$json_response = json_decode($response, true);
 					
 					// Debug: log what we got
-					error_log("Inworld API response keys: " . ($json_response ? implode(', ', array_keys($json_response)) : 'NOT JSON'));
 					
 					if (isset($json_response['audioContent'])) {
 						// Decode base64 audio data
@@ -305,13 +291,11 @@ if (!class_exists('speech_inworld')) {
 							if ($this->debug) {
 								echo "Audio saved successfully to: " . $this->file . "\n";
 							}
-							error_log("Inworld: Audio saved successfully to " . $this->file);
 							return true;
 						} else {
 							throw new Exception("Failed to write audio file to: " . $this->file);
 						}
 					} else {
-						error_log("Inworld API response (first 500 chars): " . substr($response, 0, 500));
 						throw new Exception("No audioContent in response. Keys found: " . ($json_response ? implode(', ', array_keys($json_response)) : 'NOT JSON'));
 					}
 				} else {
@@ -384,11 +368,9 @@ if (!class_exists('speech_inworld')) {
 		 */
 		public function speech() : bool {
 			try {
-				error_log("Inworld speech() called - voice: {$this->voice_id}, text: " . substr($this->text, 0, 50));
 				$this->download();
 				return true;
 			} catch (Exception $e) {
-				error_log("Inworld speech generation error: " . $e->getMessage());
 				return false;
 			}
 		}
