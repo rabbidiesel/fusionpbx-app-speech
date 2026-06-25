@@ -105,28 +105,18 @@ class speech_elevenlabs implements speech_interface {
 
 		// save the audio file
 		if ($http_code == 200) {
-			//get the file and path details
-			$path_array = pathinfo($this->filename);
-
-			//save the file as an mp3
-			file_put_contents($this->path.'/'.$path_array['filename'].'.mp3', $response);
+			//save the audio using the requested file name. the response is mp3 audio
+			//(get_format returns 'mp3'), but the file name and its extension are owned by
+			//the caller - the same contract used by the other engines. forcing a .mp3
+			//extension here wrote the file to the wrong name (e.g. a requested foo.wav was
+			//saved as foo.mp3), leaving the stored file name pointing at a missing file.
+			//the caller converts the container if the requested extension differs.
+			file_put_contents($this->path.'/'.$this->filename, $response);
 
 			//return true for success
 			return true;
 		}
 		return false;
-
-		//$curl = new curl('https://api.elevenlabs.io/v1/text-to-speech/' . $this->voice);
-		//$response = $curl->set_headers($headers)->post(json_encode($data));
-		//$error = $curl->get_error();
-		//$http_code = $curl->get_http_code();
-		//if ($curl->get_http_code() == 200) {
-		//save the audio
-		//if ($http_code == 200) {
-		//	file_put_contents($this->path . '/' . $this->filename, $response);
-		//	return true;
-		//}
-		//return false;
 	}
 
 	public function is_language_enabled(): bool {
