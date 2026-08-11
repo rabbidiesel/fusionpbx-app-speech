@@ -48,8 +48,8 @@ class speech_elevenlabs implements speech_interface {
 
 	public function speech(): bool {
 
-		//get the model automatically
-		$model_id = $this->get_model();
+		//use the selected model, otherwise detect the model automatically
+		$model_id = !empty($this->model) ? $this->model : $this->get_model();
 
 		//if model is version 1 replace it with version 2
 		if ($model_id == 'eleven_multilingual_v1') {

@@ -191,7 +191,7 @@ class speech_openai implements speech_interface {
 		];
 
 		// set the http data
-		$data['model'] = 'tts-1-hd';
+		$data['model'] = !empty($this->model) ? $this->model : 'tts-1-hd';
 		$data['input'] = $this->message;
 		$data['voice'] = $this->voice;
 		$data['response_format'] = 'wav';
@@ -255,7 +255,8 @@ class speech_openai implements speech_interface {
 
 	public function get_models(): array {
 		return [
-			'tts-1-hd' => 'tts-1-hd'
+			'tts-1-hd' => 'tts-1-hd',
+			'tts-1' => 'tts-1'
 		];
 	}
 
