@@ -98,6 +98,9 @@ if (!class_exists('speech_inworld')) {
 
 		/**
 		 * get available models
+		 *
+		 * Inworld has no list-models API endpoint (only voices), so this list is
+		 * curated. Update it here when Inworld releases or retires a model.
 		 */
 		public function get_models() : array {
 			return [
